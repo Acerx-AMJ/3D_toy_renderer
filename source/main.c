@@ -42,7 +42,7 @@ int main() {
    };
 
    // Rotation origin
-   Vector3 origin = {0.0f, 0.0f, 1.5f};
+   Vector3 origin = getOrigin(vertices, verticeCount);
    float timer = 0.0f;
 
    while (!WindowShouldClose()) {

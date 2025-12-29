@@ -8,4 +8,6 @@ Vector3 rotateAroundOriginYZ(Vector3 point, Vector3 origin, float angle);
 Vector3 rotateAroundOriginXZ(Vector3 point, Vector3 origin, float angle);
 Vector3 rotateAroundOriginXY(Vector3 point, Vector3 origin, float angle);
 
+Vector3 getOrigin(Vector3 *vertices, int verticeCount);
+
 #endif
