@@ -4,6 +4,8 @@
 #include <raylib.h>
 
 Vector2 translateToScreen(Vector3 point);
-Vector3 rotateXZAroundOrigin(Vector3 point, Vector3 origin, float angle);
+Vector3 rotateAroundOriginYZ(Vector3 point, Vector3 origin, float angle);
+Vector3 rotateAroundOriginXZ(Vector3 point, Vector3 origin, float angle);
+Vector3 rotateAroundOriginXY(Vector3 point, Vector3 origin, float angle);
 
 #endif

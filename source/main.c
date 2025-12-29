@@ -52,7 +52,7 @@ int main() {
          ClearBackground(BACKGROUND_COLOR);
 
          for (int i = 0; i < verticeCount; ++i) {
-            Vector3 rotated = rotateXZAroundOrigin(vertices[i], origin, timer);
+            Vector3 rotated = rotateAroundOriginYZ(vertices[i], origin, timer);
             Vector2 translated = translateToScreen(rotated);
 
             points[i] = translated;
