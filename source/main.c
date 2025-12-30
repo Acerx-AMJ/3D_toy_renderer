@@ -12,11 +12,11 @@ int main() {
    ShapeData data = ShapeData_init();
    getCurrentShape(&data);
 
-   Vector3 origin   = getOrigin(data.vertices, data.verticeCount);
    Vector3 rotation = {0.0f, 0.0f, 0.0f};
    Vector3 offset   = {0.0f, 0.0f, 0.0f};
 
    while (!WindowShouldClose()) {
+      // Update
       const float dt = GetFrameTime();
       
       offset.x += (IsKeyDown(KEY_D) - IsKeyDown(KEY_A)) * dt;
@@ -35,12 +35,13 @@ int main() {
          getNextShape(&data);
       }
 
+      // Render
       BeginDrawing();
          ClearBackground(BACKGROUND_COLOR);
 
          // Draw the object
          for (int i = 0; i < data.verticeCount; ++i) {
-            Vector3 rotated = rotate(Vector3Add(data.vertices[i], offset), Vector3Add(origin, offset), rotation);
+            Vector3 rotated = rotate(Vector3Add(data.vertices[i], offset), Vector3Add(data.origin, offset), rotation);
             Vector2 translated = translateToScreen(rotated);
 
             data.points[i] = translated;

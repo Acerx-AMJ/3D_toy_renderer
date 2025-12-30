@@ -12,6 +12,7 @@ typedef struct {
    Vector2 *lines;
    Vector3 *triangles;
    Vector2 *points;
+   Vector3 origin;
 } ShapeData;
 
 ShapeData ShapeData_init();

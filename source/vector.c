@@ -47,13 +47,3 @@ Vector3 rotate(Vector3 point, Vector3 origin, Vector3 angles) {
 
    return Vector3Add(local, origin);
 }
-
-// Get origin of a model
-Vector3 getOrigin(Vector3 *vertices, int verticeCount) {
-   float accumulator = 0;
-
-   for (int i = 0; i < verticeCount; ++i) {
-      accumulator += vertices[i].z;
-   }
-   return (Vector3){0.0f, 0.0f, accumulator / verticeCount};
-}

@@ -12,6 +12,7 @@ ShapeData ShapeData_init() {
    data.lines = NULL;
    data.triangles = NULL;
    data.points = NULL;
+   data.origin = (Vector3){0.0f, 0.0f, 0.0f};
    return data;
 }
 
@@ -67,6 +68,15 @@ static Vector3 cubeTriangles[] = {
    {6, 7, 3},
 };
 
+void setShapeToCube(ShapeData *data) {
+   data->verticeCount = cubeVerticeCount;
+   data->lineCount = cubeLineCount;
+   data->triangleCount = cubeTriangleCount;
+
+   data->vertices = cubeVertices;
+   data->lines = cubeLines;
+   data->triangles = cubeTriangles;
+}
 // Triangular Prism
 
 static int triangularPrismVerticeCount = 6;
@@ -104,6 +114,15 @@ static Vector3 triangularPrismTriangles[] = {
    {2, 5, 1},
 };
 
+void setShapeToTriangularPrism(ShapeData *data) {
+   data->verticeCount = triangularPrismVerticeCount;
+   data->lineCount = triangularPrismLineCount;
+   data->triangleCount = triangularPrismTriangleCount;
+
+   data->vertices = triangularPrismVertices;
+   data->lines = triangularPrismLines;
+   data->triangles = triangularPrismTriangles;
+}
 // Pyramid
 
 static int pyramidVerticeCount = 5;
@@ -137,34 +156,7 @@ static Vector3 pyramidTriangles[] = {
    {1, 4, 3},
 };
 
-// Shape getter functions
-
-void setShapeToCube(ShapeData *data) {
-   ShapeData_free(data);
-   data->verticeCount = cubeVerticeCount;
-   data->lineCount = cubeLineCount;
-   data->triangleCount = cubeTriangleCount;
-
-   data->vertices = cubeVertices;
-   data->lines = cubeLines;
-   data->triangles = cubeTriangles;
-   data->points = malloc(data->verticeCount * sizeof(Vector2));
-}
-
-void setShapeToTriangularPrism(ShapeData *data) {
-   ShapeData_free(data);
-   data->verticeCount = triangularPrismVerticeCount;
-   data->lineCount = triangularPrismLineCount;
-   data->triangleCount = triangularPrismTriangleCount;
-
-   data->vertices = triangularPrismVertices;
-   data->lines = triangularPrismLines;
-   data->triangles = triangularPrismTriangles;
-   data->points = malloc(data->verticeCount * sizeof(Vector2));
-}
-
 void setShapeToPyramid(ShapeData *data) {
-   ShapeData_free(data);
    data->verticeCount = pyramidVerticeCount;
    data->lineCount = pyramidLineCount;
    data->triangleCount = pyramidTriangleCount;
@@ -172,7 +164,6 @@ void setShapeToPyramid(ShapeData *data) {
    data->vertices = pyramidVertices;
    data->lines = pyramidLines;
    data->triangles = pyramidTriangles;
-   data->points = malloc(data->verticeCount * sizeof(Vector2));
 }
 
 // Shape functions
@@ -187,10 +178,21 @@ static shapeFunction shapeGetters[] = {
 };
 
 void getCurrentShape(ShapeData *data) {
+   ShapeData_free(data);
    shapeGetters[data->shapeIndex](data);
+
+   // Calculate the origin
+   float accumulator = 0;
+   for (int i = 0; i < data->verticeCount; ++i) {
+      accumulator += data->vertices[i].z;
+   }
+   data->origin = (Vector3){0.0f, 0.0f, accumulator / data->verticeCount};
+
+   // Allocate the memory for points
+   data->points = malloc(data->verticeCount * sizeof(Vector2));
 }
 
 void getNextShape(ShapeData *data) {
    data->shapeIndex = (data->shapeIndex + 1) % shapeCount;
-   shapeGetters[data->shapeIndex](data);
+   getCurrentShape(data);
 }
