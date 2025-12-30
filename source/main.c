@@ -19,7 +19,7 @@ int main() {
    char drawVertices  = 1;
    char drawLines     = 1;
    char drawTriangles = 1;
-   char drawStats     = 0;
+   char drawStats     = 1;
 
    while (!WindowShouldClose()) {
       // Update
