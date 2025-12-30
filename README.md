@@ -11,6 +11,11 @@ The program begins by loading all model points, lines and triangles. It rotates 
 - R - reset position and rotation
 - F - change model
 - ESCAPE - exit
+- I - toggle drawing indices of vertices
+- O - toggle drawing vertices
+- L - toggle drawing lines
+- T - toggle drawing triangles
+- H - toggle statistics
 
 ## License
 This project is licensed under the [MIT License](LICENSE). Feel free to copy, edit and distribute the code.

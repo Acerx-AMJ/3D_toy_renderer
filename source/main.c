@@ -89,17 +89,19 @@ int main() {
          // Draw UI
          if (drawStats) {
             DrawText(TextFormat("FPS: %d", GetFPS()), 5, 5, 20, WHITE);
-            DrawText(TextFormat("OFFSET X: %.3f", offset.x), 5, 30, 20, WHITE);
-            DrawText(TextFormat("OFFSET Y: %.3f", offset.y), 5, 55, 20, WHITE);
-            DrawText(TextFormat("OFFSET Z: %.3f", offset.z + data.origin.z), 5, 80, 20, WHITE);
+            DrawText(getCurrentShapesName(&data), 5, 30, 20, WHITE);
+            
+            DrawText(TextFormat("OFFSET X: %.3f", offset.x), 5, 55, 20, WHITE);
+            DrawText(TextFormat("OFFSET Y: %.3f", offset.y), 5, 80, 20, WHITE);
+            DrawText(TextFormat("OFFSET Z: %.3f", offset.z + data.origin.z), 5, 105, 20, WHITE);
 
-            DrawText(TextFormat("ROTATION X: %.3f", fmodf(rotation.x * (180.0f / PI), 360.0f)), 5, 105, 20, WHITE);
-            DrawText(TextFormat("ROTATION Y: %.3f", fmodf(rotation.y * (180.0f / PI), 360.0f)), 5, 130, 20, WHITE);
-            DrawText(TextFormat("ROTATION Z: %.3f", fmodf(rotation.z * (180.0f / PI), 360.0f)), 5, 155, 20, WHITE);
+            DrawText(TextFormat("ROTATION X: %.3f", fmodf(rotation.x * (180.0f / PI), 360.0f)), 5, 130, 20, WHITE);
+            DrawText(TextFormat("ROTATION Y: %.3f", fmodf(rotation.y * (180.0f / PI), 360.0f)), 5, 155, 20, WHITE);
+            DrawText(TextFormat("ROTATION Z: %.3f", fmodf(rotation.z * (180.0f / PI), 360.0f)), 5, 180, 20, WHITE);
 
-            DrawText(TextFormat("VERTICES: %d", data.verticeCount), 5, 180, 20, WHITE);
-            DrawText(TextFormat("LINES: %d", data.lineCount), 5, 205, 20, WHITE);
-            DrawText(TextFormat("TRIANGLES: %d", data.triangleCount), 5, 230, 20, WHITE);
+            DrawText(TextFormat("VERTICES: %d", data.verticeCount), 5, 205, 20, WHITE);
+            DrawText(TextFormat("LINES: %d", data.lineCount), 5, 230, 20, WHITE);
+            DrawText(TextFormat("TRIANGLES: %d", data.triangleCount), 5, 255, 20, WHITE);
          }
       EndDrawing();
    }

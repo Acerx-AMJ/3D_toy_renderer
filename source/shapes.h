@@ -18,6 +18,7 @@ typedef struct {
 ShapeData ShapeData_init();
 void ShapeData_free(ShapeData *data);
 
+const char* getCurrentShapesName(ShapeData *data);
 void getCurrentShape(ShapeData *data);
 void getNextShape(ShapeData *data);
 
