@@ -10,6 +10,7 @@ The program begins by loading all model points, lines and triangles. It rotates 
 - Q, E - move up/down
 - R - reset position and rotation
 - F - change model
+- C - change color
 - ESCAPE - exit
 - I - toggle drawing indices of vertices
 - O - toggle drawing vertices

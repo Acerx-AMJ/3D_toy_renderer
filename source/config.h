@@ -5,7 +5,4 @@
 #define SCREEN_H 800
 #define TITLE "3D Toy Renderer"
 
-#define FOREGROUND_COLOR GREEN
-#define BACKGROUND_COLOR BLACK
-
 #endif

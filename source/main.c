@@ -4,6 +4,15 @@
 #include <raylib.h>
 #include <raymath.h>
 
+int colorCount = 14;
+Color colors[] = {
+   GREEN, BLUE, SKYBLUE, MAGENTA, PURPLE, PINK, RED, ORANGE, YELLOW, LIME, WHITE, GRAY, BEIGE, BROWN,
+};
+
+const char *colorNames[] = {
+   "Green", "Blue", "Skyblue", "Magenta", "Purple", "Pink", "Red", "Orange", "Yellow", "Lime", "White", "Gray", "Beige", "Brown",
+};
+
 int main() {
    InitWindow(SCREEN_W, SCREEN_H, TITLE);
    SetTargetFPS(60);
@@ -14,6 +23,9 @@ int main() {
 
    Vector3 rotation = {0.0f, 0.0f, 0.0f};
    Vector3 offset   = {0.0f, 0.0f, 0.0f};
+
+   int colorIndex = 0;
+   Color drawColor = colors[colorIndex];
 
    char drawIndeces   = 0;
    char drawVertices  = 1;
@@ -54,9 +66,14 @@ int main() {
       if (IsKeyPressed(KEY_H))
          drawStats = !drawStats;
 
+      if (IsKeyPressed(KEY_C)) {
+         colorIndex = (colorIndex + 1) % colorCount;
+         drawColor = colors[colorIndex];
+      }
+
       // Render
       BeginDrawing();
-         ClearBackground(BACKGROUND_COLOR);
+         ClearBackground(BLACK);
 
          // Draw the object
          for (int i = 0; i < data.verticeCount; ++i) {
@@ -65,21 +82,21 @@ int main() {
 
             data.points[i] = translated;
             if (drawVertices) {
-               DrawCircleV(translated, (rotated.z == 0.0f ? 0.0f : 10.0f / fabsf(rotated.z)), FOREGROUND_COLOR);
+               DrawCircleV(translated, (rotated.z == 0.0f ? 0.0f : 10.0f / fabsf(rotated.z)), drawColor);
             }
          }
 
          for (int i = 0; i < data.lineCount && drawLines; ++i) {
             Vector2 start = data.points[(int)data.lines[i].x];
             Vector2 end   = data.points[(int)data.lines[i].y];
-            DrawLineV(start, end, FOREGROUND_COLOR);
+            DrawLineV(start, end, drawColor);
          }
 
          for (int i = 0; i < data.triangleCount && drawTriangles; ++i) {
             Vector2 point1 = data.points[(int)data.triangles[i].x];
             Vector2 point2 = data.points[(int)data.triangles[i].y];
             Vector2 point3 = data.points[(int)data.triangles[i].z];
-            DrawTriangle(point1, point2, point3, Fade(FOREGROUND_COLOR, 0.5f));
+            DrawTriangle(point1, point2, point3, Fade(drawColor, 0.5f));
          }
 
          for (int i = 0; i < data.verticeCount && drawIndeces; ++i) {
@@ -89,19 +106,20 @@ int main() {
          // Draw UI
          if (drawStats) {
             DrawText(TextFormat("FPS: %d", GetFPS()), 5, 5, 20, WHITE);
-            DrawText(getCurrentShapesName(&data), 5, 30, 20, WHITE);
-            
-            DrawText(TextFormat("OFFSET X: %.3f", offset.x), 5, 55, 20, WHITE);
-            DrawText(TextFormat("OFFSET Y: %.3f", offset.y), 5, 80, 20, WHITE);
-            DrawText(TextFormat("OFFSET Z: %.3f", offset.z + data.origin.z), 5, 105, 20, WHITE);
+            DrawText(TextFormat("SHAPE: %s", getCurrentShapesName(&data)), 5, 30, 20, WHITE);
+            DrawText(TextFormat("COLOR: %s", colorNames[colorIndex]), 5, 55, 20, WHITE);
 
-            DrawText(TextFormat("ROTATION X: %.3f", fmodf(rotation.x * (180.0f / PI), 360.0f)), 5, 130, 20, WHITE);
-            DrawText(TextFormat("ROTATION Y: %.3f", fmodf(rotation.y * (180.0f / PI), 360.0f)), 5, 155, 20, WHITE);
-            DrawText(TextFormat("ROTATION Z: %.3f", fmodf(rotation.z * (180.0f / PI), 360.0f)), 5, 180, 20, WHITE);
+            DrawText(TextFormat("OFFSET X: %.3f", offset.x), 5, 80, 20, WHITE);
+            DrawText(TextFormat("OFFSET Y: %.3f", offset.y), 5, 105, 20, WHITE);
+            DrawText(TextFormat("OFFSET Z: %.3f", offset.z + data.origin.z), 5, 130, 20, WHITE);
 
-            DrawText(TextFormat("VERTICES: %d", data.verticeCount), 5, 205, 20, WHITE);
-            DrawText(TextFormat("LINES: %d", data.lineCount), 5, 230, 20, WHITE);
-            DrawText(TextFormat("TRIANGLES: %d", data.triangleCount), 5, 255, 20, WHITE);
+            DrawText(TextFormat("ROTATION X: %.3f", fmodf(rotation.x * (180.0f / PI), 360.0f)), 5, 155, 20, WHITE);
+            DrawText(TextFormat("ROTATION Y: %.3f", fmodf(rotation.y * (180.0f / PI), 360.0f)), 5, 180, 20, WHITE);
+            DrawText(TextFormat("ROTATION Z: %.3f", fmodf(rotation.z * (180.0f / PI), 360.0f)), 5, 205, 20, WHITE);
+
+            DrawText(TextFormat("VERTICES: %d", data.verticeCount), 5, 230, 20, WHITE);
+            DrawText(TextFormat("LINES: %d", data.lineCount), 5, 255, 20, WHITE);
+            DrawText(TextFormat("TRIANGLES: %d", data.triangleCount), 5, 280, 20, WHITE);
          }
       EndDrawing();
    }
