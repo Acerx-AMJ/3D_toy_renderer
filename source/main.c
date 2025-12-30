@@ -9,17 +9,10 @@ int main() {
    SetTargetFPS(60);
 
    // Shape data
-   int verticeCount = triangularPrismVerticeCount;
-   int lineCount = triangularPrismLineCount;
-   int triangleCount = triangularPrismTriangleCount;
-   Vector3 *vertices = triangularPrismVertices;
-   Vector2 *lines = triangularPrismLines;
-   Vector3 *triangles = triangularPrismTriangles;
+   ShapeData data = ShapeData_init();
+   getCurrentShape(&data);
 
-   // Positioning, rotation, etc.
-   Vector2 points[verticeCount];
-
-   Vector3 origin   = getOrigin(vertices, verticeCount);
+   Vector3 origin   = getOrigin(data.vertices, data.verticeCount);
    Vector3 rotation = {0.0f, 0.0f, 0.0f};
    Vector3 offset   = {0.0f, 0.0f, 0.0f};
 
@@ -34,33 +27,46 @@ int main() {
       rotation.y += dt * 0.333f;
       rotation.z += dt * 0.333f;
 
+      if (IsKeyPressed(KEY_R)) {
+         rotation = offset = (Vector3){0.0f, 0.0f, 0.0f};
+      }
+
+      if (IsKeyPressed(KEY_F)) {
+         getNextShape(&data);
+      }
+
       BeginDrawing();
          ClearBackground(BACKGROUND_COLOR);
 
          // Draw the object
-         for (int i = 0; i < lineCount; ++i) {
-            Vector2 start = points[(int)lines[i].x];
-            Vector2 end   = points[(int)lines[i].y];
+         for (int i = 0; i < data.verticeCount; ++i) {
+            Vector3 rotated = rotate(Vector3Add(data.vertices[i], offset), Vector3Add(origin, offset), rotation);
+            Vector2 translated = translateToScreen(rotated);
+
+            data.points[i] = translated;
+            DrawCircleV(translated, 15.0f / rotated.z, FOREGROUND_COLOR);
+         }
+
+         for (int i = 0; i < data.lineCount; ++i) {
+            Vector2 start = data.points[(int)data.lines[i].x];
+            Vector2 end   = data.points[(int)data.lines[i].y];
             DrawLineV(start, end, FOREGROUND_COLOR);
          }
 
-         for (int i = 0; i < triangleCount; ++i) {
-            Vector2 point1 = points[(int)triangles[i].x];
-            Vector2 point2 = points[(int)triangles[i].y];
-            Vector2 point3 = points[(int)triangles[i].z];
+         for (int i = 0; i < data.triangleCount; ++i) {
+            Vector2 point1 = data.points[(int)data.triangles[i].x];
+            Vector2 point2 = data.points[(int)data.triangles[i].y];
+            Vector2 point3 = data.points[(int)data.triangles[i].z];
             DrawTriangle(point1, point2, point3, Fade(FOREGROUND_COLOR, 0.5f));
          }
 
-         for (int i = 0; i < verticeCount; ++i) {
-            Vector3 rotated = rotate(Vector3Add(vertices[i], offset), Vector3Add(origin, offset), rotation);
-            Vector2 translated = translateToScreen(rotated);
-
-            points[i] = translated;
-            DrawCircleV(translated, 15.0f / rotated.z, FOREGROUND_COLOR);
-         }
+         // Draw UI
          DrawFPS(5, 5);
+         DrawText("WASD EQ to move, R to reset, F to switch models.", 150, 5, 20.0f, FOREGROUND_COLOR);
       EndDrawing();
    }
+
+   ShapeData_free(&data);
    CloseWindow();
    return 0;
 }
