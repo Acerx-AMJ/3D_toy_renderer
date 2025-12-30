@@ -20,42 +20,7 @@ Vector2 translateToScreen(Vector3 point) {
    };
 }
 
-// Rotate X axis
-Vector3 rotateAroundOriginYZ(Vector3 point, Vector3 origin, float angle) {
-   Vector3 local = Vector3Subtract(point, origin);
-   float s = sinf(angle), c = cosf(angle);
-
-   return Vector3Add((Vector3){
-      local.x,
-      local.z * c - local.y * s,
-      local.z * s + local.y * c,
-   }, origin);
-}
-
-// Rotate Y axis
-Vector3 rotateAroundOriginXZ(Vector3 point, Vector3 origin, float angle) {
-   Vector3 local = Vector3Subtract(point, origin);
-   float s = sinf(angle), c = cosf(angle);
-
-   return Vector3Add((Vector3){
-      local.x * c - local.z * s,
-      local.y,
-      local.x * s + local.z * c,
-   }, origin);
-}
-
-// Rotate Z axis
-Vector3 rotateAroundOriginXY(Vector3 point, Vector3 origin, float angle) {
-   Vector3 local = Vector3Subtract(point, origin);
-   float s = sinf(angle), c = cosf(angle);
-
-   return Vector3Add((Vector3){
-      local.x * c - local.y * s,
-      local.x * s + local.y * c,
-      local.z,
-   }, origin);
-}
-
+// Rotate by all 3 axes
 Vector3 rotate(Vector3 point, Vector3 origin, Vector3 angles) {
    Vector3 local = Vector3Subtract(point, origin);
    float sx = sinf(angles.x), cx = cosf(angles.x);
