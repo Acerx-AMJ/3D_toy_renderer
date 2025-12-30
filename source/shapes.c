@@ -23,7 +23,6 @@ void ShapeData_free(ShapeData *data) {
 
 // Cube
 
-// Vertices
 static int cubeVerticeCount = 8;
 static Vector3 cubeVertices[] = {
    {-0.5f,  0.5f,  2.0f},
@@ -36,7 +35,6 @@ static Vector3 cubeVertices[] = {
    {-0.5f, -0.5f,  1.0f},
 };
 
-// Lines
 static int cubeLineCount = 12;
 static Vector2 cubeLines[] = {
    {0, 1},
@@ -71,7 +69,6 @@ static Vector3 cubeTriangles[] = {
 
 // Triangular Prism
 
-// Vertices
 static int triangularPrismVerticeCount = 6;
 static Vector3 triangularPrismVertices[] = {
    { 0.5f,  0.5f,  1.0f},
@@ -82,7 +79,6 @@ static Vector3 triangularPrismVertices[] = {
    { 0.0f, -0.5f,  2.0f},
 };
 
-// Lines
 static int triangularPrismLineCount = 9;
 static Vector2 triangularPrismLines[] = {
    {0, 1},
@@ -106,6 +102,39 @@ static Vector3 triangularPrismTriangles[] = {
    {4, 0, 1},
    {0, 4, 3},
    {2, 5, 1},
+};
+
+// Pyramid
+
+static int pyramidVerticeCount = 5;
+static Vector3 pyramidVertices[] = {
+   { 0.5f, -0.5f,  1.0f},
+   {-0.5f, -0.5f,  1.0f},
+   { 0.0f,  0.5f,  1.5f},
+   { 0.5f, -0.5f,  2.0f},
+   {-0.5f, -0.5f,  2.0f},
+};
+
+static int pyramidLineCount = 8;
+static Vector2 pyramidLines[] = {
+   {0, 1},
+   {1, 4},
+   {4, 3},
+   {3, 0},
+   {0, 2},
+   {1, 2},
+   {4, 2},
+   {3, 2},
+};
+
+static int pyramidTriangleCount = 6;
+static Vector3 pyramidTriangles[] = {
+   {3, 2, 0},
+   {0, 2, 1},
+   {1, 2, 4},
+   {4, 2, 3},
+   {3, 0, 1},
+   {1, 4, 3},
 };
 
 // Shape getter functions
@@ -134,14 +163,27 @@ void setShapeToTriangularPrism(ShapeData *data) {
    data->points = malloc(data->verticeCount * sizeof(Vector2));
 }
 
+void setShapeToPyramid(ShapeData *data) {
+   ShapeData_free(data);
+   data->verticeCount = pyramidVerticeCount;
+   data->lineCount = pyramidLineCount;
+   data->triangleCount = pyramidTriangleCount;
+
+   data->vertices = pyramidVertices;
+   data->lines = pyramidLines;
+   data->triangles = pyramidTriangles;
+   data->points = malloc(data->verticeCount * sizeof(Vector2));
+}
+
 // Shape functions
 
 typedef void (*shapeFunction)(ShapeData*);
 
-static int shapeCount = 2;
+static int shapeCount = 3;
 static shapeFunction shapeGetters[] = {
    setShapeToCube,
    setShapeToTriangularPrism,
+   setShapeToPyramid,
 };
 
 void getCurrentShape(ShapeData *data) {
