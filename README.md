@@ -4,6 +4,7 @@
 ![Screenshot](screenshot.png)
 
 The program begins by loading all model points, lines and triangles. It rotates the points around an origin, which is the average of each points Z coordinate. Then it translates that point to screen coordinates, stores it and draws a circle with the radius divided by the rotated position's Z coordinate. This makes the point appear smaller the farther it is. Next up, lines get rendered, they simply connect two stored points and do no calculations whatsoever. And finally, triangles get rendered, they also just use stored points and do no calculations. Interestingly, Raylib automatically draws a triangle only from one side, meaning no face sorting has to be done.
+
 ## Controls
 - A, D - move left/right
 - S, W - move forwards/backwards
@@ -18,5 +19,16 @@ The program begins by loading all model points, lines and triangles. It rotates 
 - T - toggle drawing triangles
 - H - toggle statistics
 
-## License
-This project is licensed under the [MIT License](LICENSE). Feel free to copy, edit and distribute the code.
+## Building
+This project depends on Raylib and C++17. You can use CMake to build it:
+```bash
+cmake -B build
+cmake --build build
+```
+The executable will be located in `build/renderer`. You can also use your favorite compiler:
+```bash
+gcc -Isource source/*.c -o renderer -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+```
+
+## Credits
+This project was made by Daniel Vishnevsky and is licensed under MIT License.
