@@ -3,9 +3,10 @@
 
 ![Screenshot](screenshot.png)
 
-The program begins by loading all model points, lines and triangles. It rotates the points around an origin, which is the average of each points Z coordinate. Then it translates that point to screen coordinates, stores it and draws a circle with the radius divided by the rotated position's Z coordinate. This makes the point appear smaller the farther it is. Next up, lines get rendered, they simply connect two stored points and do no calculations whatsoever. And finally, triangles get rendered, they also just use stored points and do no calculations. Interestingly, Raylib automatically draws a triangle only from one side, meaning no face sorting has to be done.
+The program begins by loading all model points, lines and triangles. It rotates the points around and offsets all points based on where the user is located and is looking. Then it translates that point to screen coordinates, stores it and draws the vertices (circles divided by point's Z, this gives the effect of it being 3D). Next up, lines get rendered. They aren't rendered if any of the line's points' Z values are negative. And finally, triangles get rendered in the same manner as lines. Interestingly, Raylib automatically draws a triangle only from one side, meaning no face sorting has to be done (in this situation where all triangles are transparent).
 
 ## Controls
+- mouse - look around
 - A, D - move left/right
 - S, W - move forwards/backwards
 - Q, E - move up/down

@@ -8,11 +8,11 @@ typedef struct {
    int verticeCount;
    int lineCount;
    int triangleCount;
+   float *zvalues;
    Vector3 *vertices;
    Vector2 *lines;
    Vector3 *triangles;
    Vector2 *points;
-   Vector3 origin;
 } ShapeData;
 
 ShapeData ShapeData_init();

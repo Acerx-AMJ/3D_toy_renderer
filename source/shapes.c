@@ -12,13 +12,18 @@ ShapeData ShapeData_init() {
    data.lines = NULL;
    data.triangles = NULL;
    data.points = NULL;
-   data.origin = (Vector3){0.0f, 0.0f, 0.0f};
+   data.zvalues = NULL;
    return data;
 }
 
 void ShapeData_free(ShapeData *data) {
    if (data->points) {
       free(data->points);
+      data->points = NULL;
+   }
+   if (data->zvalues) {
+      free(data->zvalues);
+      data->zvalues = NULL;
    }
 }
 
@@ -1315,15 +1320,9 @@ void getCurrentShape(ShapeData *data) {
    ShapeData_free(data);
    shapeGetters[data->shapeIndex](data);
 
-   // Calculate the origin
-   float accumulator = 0;
-   for (int i = 0; i < data->verticeCount; ++i) {
-      accumulator += data->vertices[i].z;
-   }
-   data->origin = (Vector3){0.0f, 0.0f, accumulator / data->verticeCount};
-
    // Allocate the memory for points
    data->points = malloc(data->verticeCount * sizeof(Vector2));
+   data->zvalues = malloc(data->verticeCount * sizeof(float));
 }
 
 void getNextShape(ShapeData *data) {

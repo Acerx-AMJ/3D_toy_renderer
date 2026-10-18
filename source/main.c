@@ -23,6 +23,7 @@ int main() {
 
    Vector3 rotation = {0.0f, 0.0f, 0.0f};
    Vector3 offset   = {0.0f, 0.0f, 0.0f};
+   Vector2 lastMousePos = {0.0f, 0.0f};
 
    int colorIndex = 0;
    Color drawColor = colors[colorIndex];
@@ -36,14 +37,25 @@ int main() {
    while (!WindowShouldClose()) {
       // Update
       const float dt = GetFrameTime();
-      
-      offset.x += (IsKeyDown(KEY_D) - IsKeyDown(KEY_A)) * dt;
-      offset.y += (IsKeyDown(KEY_Q) - IsKeyDown(KEY_E)) * dt;
-      offset.z += (IsKeyDown(KEY_W) - IsKeyDown(KEY_S)) * dt;
 
-      rotation.x += dt * 0.333f;
-      rotation.y += dt * 0.333f;
-      rotation.z += dt * 0.333f;
+      // Update rotation      
+      if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+         rotation.x = rotation.x - (GetMousePosition().y - lastMousePos.y) * dt;
+         rotation.x = fmaxf(-PI / 2, fminf(PI / 2, rotation.x));
+         rotation.y = rotation.y + (GetMousePosition().x - lastMousePos.x) * dt;
+      }
+      lastMousePos = GetMousePosition();
+
+      // Update offset
+      Vector3 toffset = {0.0f, 0.0f, 0.0f};
+      toffset.x = (IsKeyDown(KEY_A) - IsKeyDown(KEY_D)) * dt;
+      toffset.y = (IsKeyDown(KEY_Q) - IsKeyDown(KEY_E)) * dt;
+      toffset.z = (IsKeyDown(KEY_S) - IsKeyDown(KEY_W)) * dt;
+
+      if (toffset.x != 0.0f || toffset.y != 0.0f || toffset.z != 0.0f) {
+         Vector3 rotatedOffset = rotate(toffset, (Vector3){0, -rotation.y, -rotation.z});
+         offset = Vector3Add(offset, rotatedOffset);
+      }
 
       if (IsKeyPressed(KEY_R))
          rotation = offset = (Vector3){0.0f, 0.0f, 0.0f};
@@ -77,30 +89,48 @@ int main() {
 
          // Draw the object
          for (int i = 0; i < data.verticeCount; ++i) {
-            Vector3 rotated = rotate(Vector3Add(data.vertices[i], offset), Vector3Add(data.origin, offset), rotation);
+            Vector3 rotated = rotate(Vector3Add(data.vertices[i], offset), rotation);
             Vector2 translated = translateToScreen(rotated);
 
             data.points[i] = translated;
-            if (drawVertices) {
+            data.zvalues[i] = rotated.z;
+            if (drawVertices && (translated.x != 0.0f || translated.y != 0.0f) && rotated.z > 0.0f) {
                DrawCircleV(translated, (rotated.z == 0.0f ? 0.0f : 10.0f / fabsf(rotated.z)), drawColor);
             }
          }
 
          for (int i = 0; i < data.lineCount && drawLines; ++i) {
-            Vector2 start = data.points[(int)data.lines[i].x];
-            Vector2 end   = data.points[(int)data.lines[i].y];
-            DrawLineV(start, end, drawColor);
+            Vector2 line = data.lines[i];
+            Vector2 p1 = data.points[(int)line.x];
+            Vector2 p2 = data.points[(int)line.y];
+
+            float z1 = data.zvalues[(int)line.x];
+            float z2 = data.zvalues[(int)line.y];
+
+            if (z1 > 0.0f && z2 > 0.0f) {
+               DrawLineV(p1, p2, drawColor);
+            }
          }
 
          for (int i = 0; i < data.triangleCount && drawTriangles; ++i) {
-            Vector2 point1 = data.points[(int)data.triangles[i].x];
-            Vector2 point2 = data.points[(int)data.triangles[i].y];
-            Vector2 point3 = data.points[(int)data.triangles[i].z];
-            DrawTriangle(point1, point2, point3, Fade(drawColor, 0.5f));
+            Vector3 triangle = data.triangles[i];
+            Vector2 p1 = data.points[(int)triangle.x];
+            Vector2 p2 = data.points[(int)triangle.y];
+            Vector2 p3 = data.points[(int)triangle.z];
+
+            float z1 = data.zvalues[(int)triangle.x];
+            float z2 = data.zvalues[(int)triangle.y];
+            float z3 = data.zvalues[(int)triangle.z];
+
+            if (z1 > 0.0f && z2 > 0.0f && z3 > 0.0f && triangleNormalZ(p1, p2, p3) <= 0.0f) {
+               DrawTriangle(p1, p2, p3, Fade(drawColor, 0.5f));
+            }
          }
 
          for (int i = 0; i < data.verticeCount && drawIndeces; ++i) {
-            DrawText(TextFormat("%d", i), data.points[i].x, data.points[i].y, 25, WHITE);
+            if (data.zvalues[i] > 0.0f) {
+               DrawText(TextFormat("%d", i), data.points[i].x, data.points[i].y, 30.0f / fabsf(data.zvalues[i]), WHITE);
+            }
          }
 
          // Draw UI
@@ -109,9 +139,9 @@ int main() {
             DrawText(TextFormat("SHAPE: %s", getCurrentShapesName(&data)), 5, 30, 20, WHITE);
             DrawText(TextFormat("COLOR: %s", colorNames[colorIndex]), 5, 55, 20, WHITE);
 
-            DrawText(TextFormat("OFFSET X: %.3f", offset.x), 5, 80, 20, WHITE);
-            DrawText(TextFormat("OFFSET Y: %.3f", offset.y), 5, 105, 20, WHITE);
-            DrawText(TextFormat("OFFSET Z: %.3f", offset.z + data.origin.z), 5, 130, 20, WHITE);
+            DrawText(TextFormat("X: %.3f", offset.x), 5, 80, 20, WHITE);
+            DrawText(TextFormat("Y: %.3f", offset.y), 5, 105, 20, WHITE);
+            DrawText(TextFormat("Z: %.3f", offset.z), 5, 130, 20, WHITE);
 
             DrawText(TextFormat("ROTATION X: %.3f", fmodf(rotation.x * (180.0f / PI), 360.0f)), 5, 155, 20, WHITE);
             DrawText(TextFormat("ROTATION Y: %.3f", fmodf(rotation.y * (180.0f / PI), 360.0f)), 5, 180, 20, WHITE);
